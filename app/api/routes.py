@@ -21,7 +21,10 @@ ALLOWED_TYPE = ["image/jpeg","image/png"]
 async def upload_image(file: UploadFile = File(...)):
 
     if file.content_type not in ALLOWED_TYPE:
-        raise HTTPException(status_code = 400, detail="Only image pls")
+        raise HTTPException(
+            status_code = 400,
+            detail="Only image pls"
+        )
     unique_name = f"upload_{uuid.uuid4()}_{file.filename}"
     file_path = os.path.join(UPLOAD_DIR, unique_name)
 
@@ -36,13 +39,19 @@ async def upload_image(file: UploadFile = File(...)):
 
 @router.post("/enhance", response_model = EnhanceResponse)
 async def enhance(file: UploadFile = File(...)):
-    result = enhance_image(file)
+    try:
+        result = enhance_image(file)
 
-    # return{
-    #     "message" : "Image enhaned succ",
-    #     "output_file": result
-    # }
-    return EnhanceResponse(
-        message ="Image enhanced successful",
-        output_file = result
-    )
+        # return{
+        #     "message" : "Image enhaned succ",
+        #     "output_file": result
+        # }
+        return EnhanceResponse(
+            message ="Image enhanced successful",
+            output_file = result
+        )
+    except Exception:
+        raise HTTPException(
+            status_code = 500,
+            detail = "Image ench failed"
+        ) 

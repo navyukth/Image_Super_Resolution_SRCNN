@@ -1,0 +1,13 @@
+push
+git add .
+git commit -m "Added new feature"
+git push
+
+pull 
+
+git clone https://github.com/navyukth/Image_Super_Resolution_SRCNN.git
+cd Image_Super_Resolution_SRCNN
+
+or 
+
+git pull
