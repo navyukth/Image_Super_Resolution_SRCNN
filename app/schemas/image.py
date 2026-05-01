@@ -5,5 +5,6 @@ class UploadResponse(BaseModel):
     filename: str
 
 class EnhanceResponse(BaseModel):
+    job_id : int
     message: str
     output_file: str

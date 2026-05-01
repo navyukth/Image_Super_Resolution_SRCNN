@@ -1,10 +1,17 @@
 from fastapi import APIRouter, UploadFile, File, HTTPException
+from fastapi import Depends
+from sqlalchemy.orm import Session
+
 import os
 import shutil
 import uuid
+
 from app.services.inference import enhance_image
 from app.schemas.image import UploadResponse,EnhanceResponse
 from app.core.config import settings
+
+from app.db.deps import get_db
+from app.models.job import Job
 
 router = APIRouter()
 
@@ -38,7 +45,16 @@ async def upload_image(file: UploadFile = File(...)):
     )
 
 @router.post("/enhance", response_model = EnhanceResponse)
-async def enhance(file: UploadFile = File(...)):
+async def enhance(file: UploadFile = File(...), db: Session = Depends(get_db)):
+    
+    job = Job(
+        input_file = file.filename,
+        status = "processing"
+    )
+    
+    db.add(job)
+    db.commit()
+    db.refresh(job)
     try:
         result = enhance_image(file)
 
@@ -46,7 +62,14 @@ async def enhance(file: UploadFile = File(...)):
         #     "message" : "Image enhaned succ",
         #     "output_file": result
         # }
+
+        job.output_file = result
+        job.status = "completed"
+
+        db.commit()
+
         return EnhanceResponse(
+            job_id = job.id,
             message ="Image enhanced successful",
             output_file = result
         )

@@ -7,6 +7,12 @@ from app.core.config import settings
 from app.core.logger import logger
 
 
+from app.db.database import engine
+from app.db.base import Base
+from app.models.job import Job
+
+Base.metadata.create_all(bind=engine)
+
 app = FastAPI(
     title = settings.app_name,
     version = "1.0.0",

@@ -9,5 +9,5 @@ class Settings:
     upload_dir = os.getenv("UPLOAD_DIR","uploads")
     output_dir = os.getenv("OUTPUT_DIR","outputs")
     model_path = os.getenv("MODEL_PATH","model_weights.pth")
-    database_url = os.getenv("DATABSE_URL")
+    database_url = os.getenv("DATABASE_URL")
 settings = Settings()
