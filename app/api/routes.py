@@ -7,7 +7,7 @@ import shutil
 import uuid
 
 from app.services.inference import enhance_image
-from app.schemas.image import UploadResponse,EnhanceResponse
+from app.schemas.image import UploadResponse,EnhanceResponse,UpdateResponse,UpdateRequest
 from app.core.config import settings
 
 from app.db.deps import get_db
@@ -74,7 +74,68 @@ async def enhance(file: UploadFile = File(...), db: Session = Depends(get_db)):
             output_file = result
         )
     except Exception:
+        job.status = "failed"
+        db.commit()
+        
         raise HTTPException(
             status_code = 500,
             detail = "Image ench failed"
         ) 
+
+@router.get("/jobs")
+def get_jobs(db: Session = Depends(get_db)):
+    jobs = db.query(Job).all()
+    return jobs
+
+@router.get("/jobs/{job_id}")
+def get_job(job_id: int, db: Session = Depends(get_db)):
+
+
+    job = db.query(Job).filter(Job.id == job_id).first()
+
+    if not job:
+        raise HTTPException(
+            status_code = 404,
+            detail = "Job not found"
+        )
+
+    return job
+
+@router.delete("/jobs/{job_id}")
+def delete_job(job_id:int, db: Session = Depends(get_db)):
+
+    job = db.query(Job).filter(Job.id == job_id).first()
+
+    if not job:
+        raise HTTPException(
+            status_code = 404,
+            detail = "Job not found"
+        )
+    
+    db.delete(job)
+    db.commit()
+
+    return {
+        "message":"deleted successful"
+    }
+
+@router.patch("/jobs/{job_id}")
+
+def update_job(job_id:int,payload = UpdateRequest, db:Session = Depends(get_db)):
+
+    job = db.query(Job).filter(Job.id==job_id).first()
+
+    if not job:
+        raise HTTPException(
+            status_code = 404,
+            detail = "Job not found"
+        )
+    
+    job.status = payload.status
+    db.commit()
+    db.refresh(job)
+
+    return UpdateResponse(
+        id = job_id,
+        status  = job.status
+    )

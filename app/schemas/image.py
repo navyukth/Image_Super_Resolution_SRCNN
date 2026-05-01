@@ -1,3 +1,4 @@
+from enum import Enum
 from pydantic import BaseModel
 
 class UploadResponse(BaseModel):
@@ -8,3 +9,16 @@ class EnhanceResponse(BaseModel):
     job_id : int
     message: str
     output_file: str
+
+class UpdateRequest(BaseModel):
+    status: JobStatus
+
+class UpdateResponse(BaseModel):
+    id: int
+    status :str
+
+
+class JobStatus(str,Enum):
+    processing = "processing"
+    completed = "completed"
+    failed = "failed"

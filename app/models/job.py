@@ -10,3 +10,9 @@ class Job(Base):
     output_file = Column(String, nullable=True)
     status = Column(String, default="processing")
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+    
+    updated_at = Column(
+        DateTime(timezone=True),
+        server_default = func.now(),
+        onupdate = func.now()
+    )
