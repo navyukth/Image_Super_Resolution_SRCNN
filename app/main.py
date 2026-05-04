@@ -11,6 +11,8 @@ from app.db.database import engine
 from app.db.base import Base
 from app.models.job import Job
 
+from app.api import auth
+
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
@@ -20,6 +22,7 @@ app = FastAPI(
 )
 
 app.include_router(router)
+app.include_router(auth.router)
 
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
