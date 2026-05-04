@@ -1,11 +1,40 @@
+# Python
 __pycache__/
-*.pyc
-.env
+*.py[cod]
+*.pyo
+
+# Virtual Environments
 venv/
 .venv/
+srcnn/
+
+# Environment files
+.env
+.env.*
+
+# Upload / Output files
 uploads/
 outputs/
+
+# Build artifacts
 dist/
 build/
+*.egg-info/
 
+# Testing
+.pytest_cache/
+.coverage
+
+# IDE
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# SSH public keys
 *.pub
